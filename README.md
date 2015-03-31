@@ -1,2 +1,3 @@
 # promise-test-code
-Just some testing promises
+
+Just testing out promises
