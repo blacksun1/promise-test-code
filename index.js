@@ -1,56 +1,70 @@
 'use strict';
-var Promise = require('native-promise-only');
 
-var myAsyncPromise = new Promise(function(onFulfilled, onRejected) {
-		console.log('Executing myAsyncPromise');
-		setTimeout(function() {
-			onFulfilled(41);
-		}, 500);
-	}),
-	myStaticPromise = new Promise(function(onFulfilled, onRejected) {
-		console.log('Executing myStaticPromise');
-		onFulfilled(100);
-	}),
-	myRejectedPromise = new Promise(function(onFulfilled, onRejected) {
-		// setTimeout(onRejected, 1000);
-		onRejected(Error('It broke'));
-	}),
-	onRejected = function(onRejected) {
-		console.log('Something went wrong:', onRejected);
-	};
+let colors = require('colors');
+let Q = require('q');
+let request = require('request');
 
-// myAsyncPromise
-// .then(function(fulfilledData) {
-// 	console.log('myAsyncPromise fulfilled:', fulfilledData);
-// })
-// .then(myStaticPromise)
-// .then(function(fulfilledData) {
-// 	console.log('myStaticPromise fulfilled:', fulfilledData);
-// })
-// .catch(onRejected);
+const google = "http://www.google.com/";
+const blacksun = "http://www.blacksun.cx/";
 
+let requestWebsite = function(url) {
+	return Q.Promise(function (resolve, reject, notify) {
+		request(url, function(error, response, html) {
+		    // First we'll check to make sure no errors occurred when making the request
+		    console.log(colors.magenta("Completed " + url));
+		    if(error) {
+		    	reject(Error("An error occured: " + error));
+		    	return;
+		    }
+		    let message = "OK";
 
-Promise
-.all([
-	myAsyncPromise
-	.then(function(value) {
-		// console.log('myAsyncPromise resolved. Value is %j', value);
-		return value;
-	}),
+		    if (response.statusCode !== 200) {
+		    	let message = "invalid";
+		    	reject(Error("An invalid status value was returned: " + response.status));
+		    	return;
+		    }
 
-	myStaticPromise
-	.then(function(value) {
-		// console.log('myStaticPromise resolved. Value is %j', value);
-		return value;
-	}),
+		    let data = {
+		    	message: message,
+		    	url: url,
+		    	statusCode: response.statusCode,
+		    	html: html,
+		    };
 
-	// myRejectedPromise
-	// .then(function(value) {
-	// 	// console.log('myRejectedPromise resolved. Value is %j', value);
-	// }),
+	    	if (message === "OK") {
+	    		resolve(data);
+	    	} else {
+	    		reject(Error(data));
+	    	}
+		});
+	});
+};
 
-	])
-.then(function(value) {
-	console.log('All promises fulfilled. Data is %j', value);
-})
-.catch(onRejected);
+// Get google
+requestWebsite(google)
+	.then((value) => console.log("1st executed URL was " + value.url))
+
+	// Get blacksun
+	.then(() => requestWebsite(blacksun))
+	.then((value) => console.log("2nd Executed URL was " + value.url))
+
+	// Get ALL
+	.then(() => Q.all([requestWebsite(google), requestWebsite(blacksun)]))
+	.then((values) => {
+		console.log("Outputing all the returned URLS from the ALL operation")
+		for (let value of values) {
+			console.log(value.url);
+		}
+	})
+
+	// Get ANY
+	.then(() => Q.any([requestWebsite(google), requestWebsite(blacksun)]))
+	.then((value) => {
+		console.log("Outputing all the returned URLS from the ANY operation")
+		console.log(value.url);
+	})
+
+	// Handle Exceptions
+	.catch((error) => console.log("Handling error: [" + error + "]"));
+
+console.log(colors.green("Executed outside of the promise chain."));

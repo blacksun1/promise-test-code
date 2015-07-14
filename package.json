@@ -1,7 +1,7 @@
 {
   "name": "iPromise",
   "version": "1.0.0",
-  "description": "",
+  "description": "Just some code to muck about with promises.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,6 +9,8 @@
   "author": "Simon Bruce",
   "license": "MIT",
   "dependencies": {
-    "native-promise-only": "^0.7.8-a"
+    "colors": "^1.1.2",
+    "q": "^1.4.1",
+    "request": "^2.58.0"
   }
 }
