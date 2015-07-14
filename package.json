@@ -1,6 +1,6 @@
 {
   "name": "iPromise",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Just some code to muck about with promises.",
   "main": "index.js",
   "scripts": {
