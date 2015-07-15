@@ -1,6 +1,7 @@
 {
   "name": "iPromise",
   "version": "2.0.1",
+  "repository": "https://github.com/blacksun1/promise-test-code",
   "description": "Just some code to muck about with promises.",
   "main": "index.js",
   "scripts": {
@@ -11,6 +12,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "q": "^1.4.1",
-    "request": "^2.58.0"
+    "request": "^2.58.0",
+    "native-promise-only": "latest"
   }
 }
