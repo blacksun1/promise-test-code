@@ -19,7 +19,7 @@ let requestWebsite = function(url) {
             let message = "OK";
 
             if (response.statusCode !== 200) {
-                let message = "invalid";
+                message = "invalid";
             }
 
             let data = {
